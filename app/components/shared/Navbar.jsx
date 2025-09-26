@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -11,28 +12,24 @@ export default function Navbar() {
   const { user, logout } = useAuth();
 
   return (
-    <nav className="bg-white shadow-md sticky top-0 z-50">
+    <nav className="bg-gray-300 shadow-md sticky top-0 z-50">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex-shrink-0 text-2xl font-bold text-primary">
+            
             <Link href="/">SmartShop</Link>
+
           </div>
 
           {/* Desktop Menu */}
-          <div className="hidden text-black md:flex items-center space-x-6">
-            <Link href="/" className="hover:text-primary">Home</Link>
-            <Link href="/products" className="hover:text-primary">Products</Link>
-            <Link href="/about" className="hover:text-primary">About</Link>
-            <Link href="/contact" className="hover:text-primary">Contact</Link>
-            <Link href="/dashboard" className="block hover:text-primary">Dashboard</Link>
-            <Link href="/login" className="hover:text-primary">Login</Link>
-          <div className="hidden md:flex items-center space-x-6">
-            <Link href="/" className="hover:text-blue-600">Home</Link>
-            <Link href="/products" className="hover:text-blue-600">Products</Link>
-            <Link href="/about" className="hover:text-blue-600">About</Link>
-            <Link href="/contact" className="hover:text-blue-600">Contact</Link>
-            <Link href="/dashboard" className="block hover:text-blue-600">Dashboard</Link>
+          <div className="hidden text-gray-600 md:flex items-center space-x-6">
+            <Link href="/" className="hover:text-primary hover:underline">Home</Link>
+            <Link href="/products" className="hover:text-primary hover:underline">Products</Link>
+            <Link href="/about" className="hover:text-primary hover:underline">About</Link>
+            <Link href="/contact" className="hover:text-primary hover:underline">Contact</Link>
+            <Link href="/dashboard" className="block hover:text-primary hover:underline">Dashboard</Link>
+            <Link href="/login" className="hover:text-primary hover:underline">Login</Link>
           </div>
 
           {/* Right Side */}
@@ -58,9 +55,6 @@ export default function Navbar() {
               </span>
             </Link>
 
-            <Link href="/account">
-              <User className="w-6 h-6 text-gray-700 hover:text-primary" />
-            </Link>
             {/* User / Profile */}
             {!user ? (
               <Link href="/login">
@@ -123,10 +117,6 @@ export default function Navbar() {
           />
 
           {/* Icons */}
-          <div className="flex space-x-6 pt-2">
-            <Heart className="w-6 h-6 text-black hover:text-primary" />
-            <ShoppingCart className="w-6 h-6 text-black hover:text-primary" />
-            <User className="w-6 h-6 text-black hover:text-primary" />
           <div className="flex items-center space-x-6 pt-2">
             <Heart className="w-6 h-6 text-gray-700 hover:text-blue-600" />
             <ShoppingCart className="w-6 h-6 text-gray-700 hover:text-blue-600" />
@@ -161,8 +151,8 @@ export default function Navbar() {
             )}
           </div>
         </div>
-      )
-      }
+      )}
     </nav>
-  )
-};
+  );
+}
+

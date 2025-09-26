@@ -12,11 +12,12 @@ export default function Sidebar() {
     { name: "Overview", href: "/dashboard", icon: <FaChartPie /> },
     { name: "Add Product", href: "/dashboard/addproduct", icon: <FaPlus /> },
     { name: "My Products", href: "/dashboard/myproduct", icon: <FaBox /> },
+    { name: "All Products", href: "/dashboard/allproduct", icon: <FaBox /> },
   ];
 
   return (
     <aside className="w-64 min-h-screen bg-white border-r shadow-lg flex flex-col">
-      <h1 className="text-2xl font-bold text-green-600 p-6 border-b">Smart Shop</h1>
+      <h1 className="text-2xl font-bold text-green-600 px-6 py-4 border-b">Smart Shop</h1>
       <nav className="flex-1 p-4 space-y-2">
         {links.map(({ name, href, icon }) => (
           <Link
