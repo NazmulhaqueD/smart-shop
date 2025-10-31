@@ -35,11 +35,11 @@ export default function DeliveryDashboard() {
         setLoading(true);
 
         // fetch deliveries
-        const deliveriesRes = await axios.get("http://localhost:5000/orders");
+        const deliveriesRes = await axios.get("https://smart-shop-server-three.vercel.app/orders");
         setDeliveries(deliveriesRes.data);
 
         // fetch support issues
-        const issuesRes = await axios.get("http://localhost:5000/issue");
+        const issuesRes = await axios.get("https://smart-shop-server-three.vercel.app/issue");
         const sortedIssues = issuesRes.data
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
           .slice(0, 3); // last 3 issues
