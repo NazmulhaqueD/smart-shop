@@ -23,8 +23,8 @@ export default function Recommended({ recommendedProducts }) {
       </div>
 
       {/* Products Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {recommendedProducts.slice(0, 3).map((product) => (
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
+        {recommendedProducts.slice(0, 5).map((product) => (
           <ProductCard key={product._id} product={product} />
         ))}
       </div>
