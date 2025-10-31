@@ -211,11 +211,7 @@ export default function Sidebar() {
         link: "/dashboard/user/cart",
         icon: <ShoppingCartIcon className="h-5 w-5" />,
       },
-      {
-        name: "My Reviews",
-        link: "/dashboard/user/reviews",
-        icon: <ChatBubbleBottomCenterTextIcon className="h-5 w-5" />,
-      },
+      
       {
         name: "Support",
         link: "/dashboard/user/support",
