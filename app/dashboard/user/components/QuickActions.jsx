@@ -13,18 +13,18 @@ export default function QuickActions() {
       href: "/track-order",
     },
     {
-      title: "My Wishlist",
+      title: "Join As Seller",
       description: "Saved items",
       icon: Heart,
       color: "from-pink-500 to-pink-600",
-      href: "/wishlist",
+      href: "dashboard/user/joinasseller",
     },
     {
-      title: "Write Review",
+      title: "profile",
       description: "Share experience",
       icon: Star,
       color: "from-green-500 to-green-600",
-      href: "/write-review",
+      href: "dashboard/profile",
     },
     {
       title: "support",
