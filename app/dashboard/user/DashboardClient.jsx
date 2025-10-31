@@ -6,7 +6,6 @@ import StatsCards from "./components/StateCards";
 import RecentOrders from "./components/RecentOrders";
 import QuickActions from "./components/QuickActions";
 import Recommended from "./components/Recommended";
-import Reviews from "./components/Reviews";
 import SupportSection from "./components/SupportSection";
 import OrdersGraph from "./components/OrdersGraph";
 
@@ -23,7 +22,6 @@ export default function DashboardClient() {
 
     const fetchData = async () => {
       try {
-        // 🟢 Fetch all data together
         const [ordersRes, cartRes, userRes, recRes] = await Promise.all([
           fetch(
             `https://smart-shop-server-three.vercel.app/orders?orderedBy=${user.email}`
@@ -44,7 +42,6 @@ export default function DashboardClient() {
         const userData = await userRes.json();
         const recommended = await recRes.json();
 
-        // ✅ Extract gems point from user data
         const gems =
           Array.isArray(userData) && userData.length > 0
             ? userData[0]?.gemPoints || 0
@@ -56,7 +53,7 @@ export default function DashboardClient() {
           0
         );
 
-        // ✅ Last 3 orders
+        // ✅ Get last 3 recent orders
         const lastOrders = orders
           .sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate))
           .slice(0, 3)
@@ -73,17 +70,18 @@ export default function DashboardClient() {
             items: order.items || [],
           }));
 
-        // ✅ Update user stats (gems instead of wishlist)
+        // ✅ Limit recommended products to 5
+        const top5Products = recommended.slice(0, 5);
+
         setUserStats({
           totalOrders,
-          gemsPoint: gems, // <-- Replaced wishlist with gems
-          reviewsCount: 8,
+          gemsPoint: gems,
           cartItems: cartItems.length,
           totalSpent,
         });
 
         setRecentOrders(lastOrders);
-        setRecommendedProducts(recommended);
+        setRecommendedProducts(top5Products);
         setAllOrders(orders);
       } catch (err) {
         console.error("Error fetching dashboard data:", err);
@@ -102,19 +100,13 @@ export default function DashboardClient() {
       </div>
     );
 
-  const userReviews = [
-    { id: 1, product: "iPhone 15", rating: 5, comment: "Excellent phone!" },
-    { id: 2, product: "Samsung Galaxy S23", rating: 4, comment: "Good performance." },
-    { id: 3, product: "MacBook Pro", rating: 5, comment: "Loving it!" },
-  ];
-
   return (
-    <div className="p-4 md:p-6 bg-gray-50 min-h-screen space-y-6">
-      {/* Stats Cards */}
+    <div className="p-4 md:p-6 bg-gray-50 min-h-screen space-y-8">
+      {/* 🟦 Stats Section */}
       <StatsCards userStats={userStats} />
 
-      {/* Recent Orders & Orders Graph */}
-      <div className="grid grid-cols-1 md:grid-cols-2 not-first:gap-3 md:gap-12">
+      {/* 🟩 Orders + Graph (Side by Side) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="w-full">
           <RecentOrders recentOrders={recentOrders} />
         </div>
@@ -123,20 +115,15 @@ export default function DashboardClient() {
         </div>
       </div>
 
-      {/* Quick Actions */}
+      {/* 🟨 Quick Actions */}
       <QuickActions userStats={userStats} notifications={[]} />
 
-      {/* Recommended & Reviews */}
-      <div className="flex flex-col lg:flex-row gap-6 items-stretch">
-        <div className="w-full lg:w-7/10 min-w-0">
-          <Recommended recommendedProducts={recommendedProducts} />
-        </div>
-        <div className="w-full lg:w-3/10 min-w-0">
-          <Reviews userReviews={userReviews} />
-        </div>
+      {/* 🟧 Recommended Products (5 items only) */}
+      <div className="w-full">
+        <Recommended recommendedProducts={recommendedProducts.slice(0, 5)} />
       </div>
 
-      {/* Support Section */}
+      {/* 🟪 Support Section */}
       <SupportSection />
     </div>
   );
