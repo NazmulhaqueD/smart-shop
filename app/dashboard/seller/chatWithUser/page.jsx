@@ -6,7 +6,7 @@ import { useAuth } from "@/context/AuthContext";
 import { Check, Store, User } from "lucide-react";
 import Image from "next/image";
 
-// const socket = io("http://localhost:5000"); 
+// const socket = io("https://smart-shop-server-three.vercel.app/"); 
 
 export default function chatWithUser() {
   const { user } = useAuth();
@@ -17,7 +17,7 @@ export default function chatWithUser() {
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
-    const newSocket = io("http://localhost:5000");
+    const newSocket = io("https://smart-shop-server-three.vercel.app/");
     setSocket(newSocket);
     return () => newSocket.disconnect();
   }, []);

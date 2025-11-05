@@ -25,14 +25,14 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
 
-         // ADD THIS PROP
-        suppressHydrationWarning={true} 
+        // ADD THIS PROP
+        suppressHydrationWarning={true}
       >
         <AuthProvider>
-            {children}
-            <Ai/>
+          {children}
+          <Ai />
+          {/* <ChatWidget></ChatWidget> */}
         </AuthProvider>
-        <ChatWidget></ChatWidget>
       </body>
     </html>
   );
