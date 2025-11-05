@@ -444,17 +444,15 @@ Here's a high-level overview of the project's file structure:
   <img src="https://i.postimg.cc/PrfV1Rmg/Screenshot-2025-11-06-002019.png" width="100%" alt="Landing page Page" />
   <br/><br/>
   <img src="https://i.postimg.cc/XNPBgZFj/Screenshot-2025-11-06-002309.png" width="100%" alt="Register Page" />
-  <img src="" width="100%" alt="Banner" />
-  <br/>
-  <img src="" width="100%" alt="Page" />
-  <img src="https://i.postimg.cc/L8djwvCG/Screenshot-2025-10-26-131511.png" width="100%" alt=" Page " />
-  <img src="" width="100%" alt="Profile page" />
-  <img src="" width="100%" alt="Page " />
-  <img src="" width="100%" alt="Page" />
-  <img src="" width="100%" alt="Page " />
-  <img src="" width="100%" alt="Page" />
-  <img src="" width="100%" alt="Page " />
-  <img src="" width="100%" alt="Page" />
+  <br/><br/>
+  <img src="https://i.postimg.cc/g0MtSqmH/Screenshot-2025-11-06-003011.png" width="100%" alt="Admin dashboard" />
+  <br/><br/>
+  <img src="https://i.postimg.cc/Y0yptm6P/Screenshot-2025-11-06-003408.png" width="100%" alt="Seller dashboard" />
+  <br/><br/>
+  <img src="https://i.postimg.cc/brS52DcP/Screenshot-2025-11-06-003615.png" width="100%" alt="User dashboard" />
+  <br/><br/>
+  <img src="https://i.postimg.cc/4N50HTjd/Screenshot-2025-11-06-003802.png" width="100%" alt="DeliveryMan dashboard" />
+  <br/><br/>
 </div>
 
 ---
