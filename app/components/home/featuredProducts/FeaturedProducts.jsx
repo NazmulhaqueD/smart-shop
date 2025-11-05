@@ -1,139 +1,236 @@
-'use client';
+"use client";
+import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion"; 
 
-import React from 'react';
-import { motion } from 'framer-motion';
+const mockUser = { email: "mock.user@example.com", isLoggedIn: true }; 
+
+// Inline Shopping Cart SVG Icon (replaces GrCart)
+const ShoppingCartIcon = ({ className }) => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    className={className} 
+    fill="none" 
+    viewBox="0 0 24 24" 
+    stroke="currentColor" 
+    strokeWidth={2}
+  >
+    <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+  </svg>
+);
+// --- END MOCKS & UTILITIES ---
 
 export default function FeaturedProducts() {
-  const products = [
-    {
-      id: 1, name: 'TV 43" Class TU7000 Series Crystal UHD 4K Smart TV',
-      price: '$599.00', origPrice: '$678.95', save: '$80 (5%)',
-      img: 'https://i.ibb.co.com/LzdM1Qns/32-inch-android-led-tv-612.jpg'
-    },
-    {
-      id: 2, name: 'EARBUDS Apple AirPods 3rd generation with Charging Case', 
-      price: '$170.00', origPrice: '$250.00', save: '$80 (10%)',
-      img: 'https://i.postimg.cc/jdxqWqWN/25baefac5d2a64cff300295923077243.jpg'
-    },
-    {
-      id: 3, name: 'GAMING CONSOLE Apple Mac Mini M4 Chip 16/512GB Silver (10C CPU 10...)',
-      price: '$666.00', origPrice: '$750.00', save: '$84 (10%)',
-      img: 'https://i.postimg.cc/gk2dzM5H/c2dee5d94568d5f8415e1de463039aa2.jpg'
-    },
-    {
-      id: 4, name: 'GAMING CONSOLE Apple MacBook Pro 16 in M4 Pro Chip Liquid Retina',
-      price: '$3,759.00', origPrice: '$4,434.90', save: '$675 (10%)',
-      img: 'https://i.postimg.cc/wv2Pnz68/1480ac68643aad7626f6084589292944.jpg'
-    },
-    {
-      id: 5, name: 'Product 5',
-      price: '$199.00', origPrice: '$250.00', save: '$51 (10%)',
-      img: 'https://i.ibb.co.com/kgQHjkfB/Apple-i-Phone-17-Pro-Max.png'
-    },
-    {
-      id: 6, name: 'Product 6',
-      price: '$299.00', origPrice: '$350.00', save: '$51 (10%)',
-      img: 'https://i.ibb.co.com/T9gR2Ks/foodela-baglamoti-rice.jpg'
-    },
-    {
-      id: 7, name: 'Product 7',
-      price: '$499.00', origPrice: '$550.00', save: '$51 (10%)',
-      img: 'https://i.ibb.co.com/LzdM1Qns/32-inch-android-led-tv-612.jpg'
-    },
-    {
-      id: 8, name: 'Product 8',
-      price: '$699.00', origPrice: '$750.00', save: '$51 (10%)',
-      img: 'https://i.ibb.co.com/GQZyX8gh/497-4972831-transparent-leather-jacket-png-cute-red-leather-jacket.png'
-    },
-  ];
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState(null); // Replaces react-toastify's toast
+  
+  // Using the mock user for demonstration purposes
+  const user = mockUser; 
 
+  // Fetch Products using native fetch API
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch("https://smart-shop-server-three.vercel.app/products");
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        setProducts(data);
+      } catch (err) {
+        console.error("Fetch Error:", err);
+        setMessage("ERROR: Failed to load products. Check console for details.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
+
+  //  Added animation variants 
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.2,
-      },
+      transition: { staggerChildren: 0.15, delayChildren: 0.2 },
     },
   };
 
-  const itemVariants = {
+  const cardVariants = {
     hidden: { opacity: 0, y: 30 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { type: 'spring', stiffness: 120, damping: 20 },
+      transition: { type: "spring", stiffness: 120, damping: 20 },
     },
-    hover: { scale: 1.02, transition: { type: 'spring', stiffness: 300 } },
+    hover: { scale: 1.02, transition: { type: "spring", stiffness: 300 } },
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-40 bg-base-100">
+        <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  // Slice the first 8 products from the real data
+  const featuredProducts = products.slice(0, 8);
+
+  // Add to Cart using native fetch API
+  const handleAddToCart = async (product) => {
+    if (!user || !user.isLoggedIn) { // Check if user is "logged in" based on mock
+      setMessage("ERROR: Please login to add to cart");
+      setTimeout(() => setMessage(null), 3000); 
+      return;
+    }
+
+    const cartItem = {
+      userEmail: user?.email,
+      productId: product._id,
+      name: product.name,
+      price: product.price,
+      image: product.image,
+      quantity: 1,
+    };
+
+    try {
+      const response = await fetch(
+        "https://smart-shop-server-three.vercel.app/addToCart",
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(cartItem),
+        }
+      );
+      
+      const resData = await response.json();
+
+      if (response.ok && resData?.insertedId) { 
+        setMessage(`SUCCESS: ${product.name} added to cart!`);
+      } else {
+        setMessage("ERROR: Failed to add to cart. Server issue or duplicate item.");
+      }
+    } catch (err) {
+      console.error(err);
+      setMessage("ERROR: Failed to connect to the cart service.");
+    }
+    setTimeout(() => setMessage(null), 3000); // Clear message after 3s
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <div className="text-center mb-10">
-        <motion.h2
-          className="text-3xl md:text-4xl font-bold mb-2 text-black bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text "
+    <section className="py-12 bg-base-100">
+      <div className="container mx-auto px-4">
+        
+        {/* Message Alert (Replaces toast) */}
+        {message && (
+            <motion.div 
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className={`alert ${message.startsWith('ERROR') ? 'alert-error' : 'alert-success'} shadow-lg mb-8 max-w-lg mx-auto`}
+                role="alert"
+            >
+                <div>
+                    <span>{message.replace(/(ERROR|SUCCESS): /, '')}</span>
+                </div>
+            </motion.div>
+        )}
+
+        {/* Animated Section Title */}
+        <motion.div
+          className="text-center mb-10"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          Featured Products
-        </motion.h2>
-        <motion.p
-          className="text-base md:text-lg max-w-md mx-auto text-gray-600"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3, duration: 0.6 }}
-        >
-          Check & Get Your Desired Product!
-        </motion.p>
-      </div>
-
-      <motion.div
-        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
-        variants={containerVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: '-100px' }}
-      >
-        {products.map(product => (
-          <motion.div
-            key={product.id}
-            className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200 hover:shadow-xl transition"
-            variants={itemVariants}
-            whileHover="hover"
-            whileTap={{ scale: 0.97 }}
+          <motion.h2
+            className="text-3xl sm:text-4xl font-bold text-primary bg-clip-text"
+            initial={{ scale: 0.9 }}
+            whileInView={{ scale: 1 }}
+            transition={{ duration: 0.5 }}
           >
-            <div className="relative overflow-hidden">
-              <motion.img
-                src={product.img}
-                alt={product.name}
-                className="w-full h-48 object-cover"
-                whileHover={{ scale: 1.1 }}
-                transition={{ duration: 0.4 }}
-              />
-              <div className="absolute top-2 left-2 bg-secondary text-white text-xs font-semibold px-2 py-1 rounded">
-                {product.save}
+            Featured Products
+          </motion.h2>
+          <motion.p
+            className="text-base-content/70 mt-2 text-sm sm:text-base"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+          >
+            Discover our top-featured items curated for you.
+          </motion.p>
+        </motion.div>
+
+        {/* Animated Products Grid */}
+        <motion.div
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+        >
+          {featuredProducts.map((product) => (
+            <motion.div
+              key={product._id}
+              className="rounded-xl border border-base-200 bg-base-100 shadow-lg hover:shadow-xl overflow-hidden transition"
+              variants={cardVariants}
+              whileHover="hover"
+              whileTap={{ scale: 0.97 }}
+            >
+              {/* Using standard <a> tag instead of Next/Link */}
+              <a href={`/products/${product._id}`} aria-label={`View ${product.name} details`}>
+                <div className="relative w-full h-48 bg-base-300"> 
+                  {/* Using standard <img> tag instead of Next/Image */}
+                  <img
+                    src={
+                      product.image?.startsWith("http")
+                        ? product.image
+                        : "https://placehold.co/200x200/4ade80/ffffff?text=Placeholder" // Fallback placeholder
+                    }
+                    alt={product.name}
+                    className="object-cover w-full h-full"
+                  />
+                </div>
+              </a>
+
+              <div className="p-4">
+                <a href={`/products/${product._id}`}>
+                  <h3 
+                    className="inline-block relative text-base-content font-medium text-sm mb-1 
+                      hover:text-primary transition-colors duration-200 
+                      after:content-[''] after:absolute after:left-0 after:bottom-0 
+                      after:w-0 after:h-[1px] after:bg-primary 
+                      hover:after:w-full after:transition-all after:duration-300"
+                  >
+                    {product.name}
+                  </h3>
+                </a>
+                <p className="text-secondary font-bold mt-1">${product.price}</p>
+
+                <div className="flex justify-between mt-3">
+                  <button 
+                    onClick={() => handleAddToCart(product)}
+                    className="tooltip tooltip-right"
+                    data-tip="Add to Cart"
+                    aria-label="Add to cart"
+                  >
+                    <ShoppingCartIcon className="w-6 h-6 text-primary hover:text-secondary hover:cursor-pointer transition-colors" />
+                  </button>
+                  <a
+                    href={`/checkout?type=single&id=${product._id}`}
+                    className="px-3 py-1 bg-primary text-primary-content rounded-lg hover:opacity-90 transition font-semibold"
+                  >
+                    Buy Now
+                  </a>
+                </div>
               </div>
-            </div>
-            <div className="p-4">
-              <h3 className="text-gray-900 font-semibold text-sm mb-1">{product.name}</h3>
-              <div className="text-blue-600 font-bold text-sm mb-2">
-                {product.price}{' '}
-                <span className="text-gray-500 line-through text-xs">{product.origPrice}</span>
-              </div>
-              <div className="flex space-x-2">
-                <button className="flex-1 cursor-pointer bg-primary text-white py-2 rounded ">
-                  Add to Cart
-                </button>
-                <button className="flex-1 cursor-pointer bg-secondary text-white py-2 rounded ">
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        ))}
-      </motion.div>
-    </div>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+    </section>
   );
 }

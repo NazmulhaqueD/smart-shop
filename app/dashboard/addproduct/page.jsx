@@ -2,121 +2,156 @@
 
 import { useAuth } from "@/context/AuthContext";
 import axios from "axios";
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
 
 export default function AddProductForm() {
-
   const { user } = useAuth();
+  const [loading, setLoading] = useState(false);
 
-  const { register, handleSubmit, formState: { errors }, reset } = useForm();
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+    reset,
+  } = useForm();
+
+  const watchImage = watch("image");
 
   const onSubmit = (data) => {
+    if (!user?.email) {
+      Swal.fire("Error", "You must be logged in to add a product", "error");
+      return;
+    }
 
-    data.seller = user?.displayName;
+    data.sellerName = user.displayName;
+    data.sellerEmail = user.email;
 
-    axios.post('https://smart-shop-server-three.vercel.app/products', data)
-      .then(res => {
+    setLoading(true);
+
+    axios
+      .post("https://smart-shop-server-three.vercel.app/products", data)
+      .then((res) => {
         if (res.data?.insertedId) {
           Swal.fire({
             position: "top-end",
             icon: "success",
-            title: "Your Product has been saved",
+            title: "Product saved successfully",
             showConfirmButton: false,
-            timer: 1500
+            timer: 1500,
           });
+          reset();
         }
       })
-      .catch(error => {
-        console.log(error);
-
+      .catch((error) => {
+        console.error(error);
+        Swal.fire("Error", "Something went wrong!", "error");
       })
-    reset();
+      .finally(() => setLoading(false));
   };
 
   return (
-    <div className="max-w-lg mx-auto bg-base-100 shadow-md rounded-2xl p-6 mt-10">
-      <h2 className="text-2xl font-semibold mb-4 text-center text-primary">
-        Add Product
+    <div className="max-w-xl mx-auto mt-10 p-6 bg-white rounded-3xl shadow-2xl border border-gray-100">
+      {/* Gradient Title */}
+      <h2 className="text-3xl font-bold text-center text-secondary bg-clip-text mb-6">
+        Add New Product
       </h2>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         {/* Product Name */}
-        <div>
-          <label className="block font-medium text-secondary">Product Name</label>
+        <div className="form-group">
+          <label className="block font-medium text-secondary mb-1">Product Name</label>
           <input
             type="text"
             {...register("name", { required: "Product name is required" })}
-            className="w-full input input-bordered"
+            className="w-full input input-bordered focus:ring-2 focus:ring-indigo-300 rounded-xl transition-all"
             placeholder="Enter product name"
           />
-          {errors.name && (
-            <p className="text-error text-sm">{errors.name.message}</p>
-          )}
+          {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
         </div>
 
         {/* Price */}
-        <div>
-          <label className="block font-medium text-secondary">Price</label>
+        <div className="form-group">
+          <label className="block font-medium text-secondary mb-1">Price ($)</label>
           <input
             type="number"
-            {...register("price", { required: "Price is required" })}
-            className="w-full input input-bordered"
+            {...register("price", {
+              required: "Price is required",
+              min: { value: 0.01, message: "Price must be greater than 0" },
+            })}
+            className="w-full input input-bordered focus:ring-2 focus:ring-indigo-300 rounded-xl transition-all"
             placeholder="Enter product price"
           />
-          {errors.price && (
-            <p className="text-error text-sm">{errors.price.message}</p>
-          )}
+          {errors.price && <p className="text-red-500 text-sm mt-1">{errors.price.message}</p>}
         </div>
 
         {/* Description */}
-        <div>
-          <label className="block font-medium text-secondary">Description</label>
+        <div className="form-group">
+          <label className="block font-medium text-secondary mb-1">Description</label>
           <textarea
             {...register("description", { required: "Description is required" })}
-            className="w-full textarea textarea-bordered"
+            className="w-full textarea textarea-bordered focus:ring-2 focus:ring-indigo-300 rounded-xl transition-all resize-none"
             placeholder="Enter product description"
+            rows={4}
           ></textarea>
           {errors.description && (
-            <p className="text-error text-sm">{errors.description.message}</p>
+            <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>
           )}
         </div>
 
         {/* Image URL */}
-        <div>
-          <label className="block font-medium text-secondary">Image URL</label>
+        <div className="form-group">
+          <label className="block font-medium text-secondary mb-1">Image URL</label>
           <input
             type="text"
-            {...register("image")}
-            className="w-full input input-bordered"
+            {...register("image", {
+              pattern: {
+                value: /(https?:\/\/.*\.(?:png|jpg|jpeg|gif|webp))/i,
+                message: "Enter a valid image URL",
+              },
+            })}
+            className="w-full input input-bordered focus:ring-2 focus:ring-indigo-300 rounded-xl transition-all"
             placeholder="Enter image URL"
           />
+          {errors.image && <p className="text-red-500 text-sm mt-1">{errors.image.message}</p>}
+          {watchImage && (
+            <div className="mt-3 flex justify-center">
+              <img
+                src={watchImage}
+                alt="Preview"
+                className="h-28 w-28 object-cover rounded-xl shadow-lg border border-gray-200 transition-transform hover:scale-105"
+              />
+            </div>
+          )}
         </div>
 
         {/* Category */}
-        <div>
-          <label className="block font-medium text-secondary">Category</label>
+        <div className="form-group">
+          <label className="block font-medium text-secondary mb-1">Category</label>
           <select
             {...register("category", { required: "Category is required" })}
-            className="select select-bordered w-full"
+            className="w-full select select-bordered focus:ring-2 focus:ring-indigo-300 rounded-xl transition-all"
           >
             <option value="">Select a category</option>
             <option value="electronics">Electronics</option>
             <option value="fashion">Fashion</option>
             <option value="grocery">Grocery</option>
+            <option value="home">Home & Living</option>
+            <option value="toys">Gifts & Toys</option>
+            <option value="sports">Fitness & Sports</option>
           </select>
-          {errors.category && (
-            <p className="text-error text-sm">{errors.category.message}</p>
-          )}
+          {errors.category && <p className="text-red-500 text-sm mt-1">{errors.category.message}</p>}
         </div>
 
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full btn btn-primary"
+          className="w-full bg-secondary py-3 text-lg font-semibold rounded-2xl shadow-md hover:shadow-lg transition-all cursor-pointer"
+          disabled={loading}
         >
-          Add Product
+          {loading ? "Saving..." : "Add Product"}
         </button>
       </form>
     </div>

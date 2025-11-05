@@ -1,95 +1,120 @@
+// app/signup/page.jsx
+import Navbar from "@/app/components/shared/Navbar";
 import Link from "next/link";
-import PasswordInput from "./components/PasswordInput";
-import SignUpButton from "./components/SignUpButton";
-import ImageUpload from "./components/ImageUpload"; 
+import SignUpForm from "./components/SignUpForm";
 import SocialButton from "./components/SocialButton";
+import LottieSignup from "./components/LottieSignup";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
-import Navbar from "@/app/components/shared/Navbar";
 
 export default function SignUpPage() {
   return (
-    <section className="bg-sky-100 min-h-screen">
-  <Navbar />
+    <section className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+      <Navbar />
 
-  <div className="flex items-center justify-center py-16 px-4">
-    <div className="w-full max-w-md bg-white/90 backdrop-blur-lg rounded-3xl shadow-2xl overflow-hidden">
-      <div className="p-6 flex flex-col justify-center space-y-4">
-
-        {/* Icon */}
-        <div className="flex justify-center mb-2">
-          <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-sky-200 shadow-inner">
-            <span className="text-3xl">📝</span>
+      <div className="min-h-screen flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-16 pt-20 pb-10 px-4 max-w-7xl mx-auto">
+        {/* Left: Lottie Animation */}
+        <div className="w-full lg:w-1/2 flex flex-col items-center justify-center">
+          <div className="max-w-lg w-full">
+            <LottieSignup />
+          </div>
+          <div className="text-center mt-6 max-w-md">
+            <h3 className="text-2xl font-bold text-gray-800 mb-3">
+              Join Thousands of Happy Users
+            </h3>
+            <p className="text-gray-600 leading-relaxed">
+              Start your journey with us and experience seamless productivity.{" "}
+              Already have an account?{" "}
+              <Link
+                href="/login"
+                className="text-blue-600 font-semibold hover:text-blue-700 transition-colors"
+              >
+                Sign in here
+              </Link>
+            </p>
           </div>
         </div>
 
-        {/* Title */}
-        <h2 className="text-center text-2xl font-bold text-sky-700">Create an Account</h2>
-        <p className="text-center text-gray-500 text-sm">
-          Sign up to get started on your journey
-        </p>
+        {/* Right: Signup Card */}
+        <div className="w-full max-w-lg">
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/60 p-8 lg:p-10">
+            {/* Header */}
+            <div className="text-center mb-8">
+              <div className="w-16 h-16 flex items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 mx-auto mb-4 shadow-lg">
+                <span className="text-2xl text-white">👤</span>
+              </div>
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                Create Account
+              </h2>
+              <p className="text-gray-500 text-base">Join our community today</p>
+            </div>
 
-        {/* Form */}
-        <form className="mt-4 space-y-3">
-          <input
-            type="text"
-            name="name"
-            placeholder="Full Name"
-            className="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-black focus:ring-2 focus:ring-sky-400 focus:border-sky-400 transition duration-200 shadow-sm hover:shadow-md"
-            required
-          />
+            {/* Form */}
+            <div className="mb-6">
+              {/* SignUpForm is client component */}
+              <SignUpForm />
+            </div>
 
-          {/* Image Upload */}
-          <ImageUpload />
+            {/* Divider */}
+            <div className="flex items-center my-8">
+              <hr className="flex-1 border-gray-300" />
+              <span className="mx-4 text-sm font-medium text-gray-500 bg-white/80 px-3 py-1 rounded-full">
+                Or continue with
+              </span>
+              <hr className="flex-1 border-gray-300" />
+            </div>
 
-          <input
-            type="email"
-            name="email"
-            placeholder="Email Address"
-            className="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-black focus:ring-2 focus:ring-sky-400 focus:border-sky-400 transition duration-200 shadow-sm hover:shadow-md"
-            required
-          />
+            {/* Social Buttons */}
+            <div className="flex flex-col sm:flex-row gap-3 mb-6">
+              <SocialButton
+                provider="google"
+                icon={
+                  <>
+                    <FcGoogle size={22} />
+                    <span className="text-sm font-semibold text-gray-700">Google</span>
+                  </>
+                }
+                className="flex-1 flex items-center justify-center gap-3 rounded-xl py-3.5 px-4
+                           bg-white border border-gray-300 text-gray-700 font-semibold shadow-sm
+                           hover:shadow-md hover:border-gray-400 hover:bg-gray-50
+                           active:scale-[0.97] transition-all duration-300"
+              />
 
-          {/* Password Input */}
-          <PasswordInput name="password" />
+              <SocialButton
+                provider="facebook"
+                icon={
+                  <>
+                    <FaFacebook size={22} className="text-white" />
+                    <span className="text-sm font-semibold text-white">Facebook</span>
+                  </>
+                }
+                className="flex-1 flex items-center justify-center gap-3 rounded-xl py-3.5 px-4
+                           bg-[#1877F2] text-white font-semibold shadow-sm
+                           hover:shadow-md hover:bg-[#166FE5] active:scale-[0.97]
+                           transition-all duration-300"
+              />
+            </div>
 
-          {/* Sign Up Button */}
-          <SignUpButton className="w-full py-2.5 rounded-xl bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700 text-white font-semibold shadow-lg transition duration-300" />
-        </form>
-
-        {/* Already have account */}
-        <p className="text-center text-sm text-gray-500 mt-1">
-          Already have an account?{" "}
-          <Link href="/login" className="text-sky-500 hover:underline font-medium">
-            Sign In
-          </Link>
-        </p>
-
-        {/* Divider */}
-        <div className="flex items-center my-4">
-          <hr className="flex-1 border-gray-300" />
-          <span className="mx-3 text-sm text-gray-400">Or sign in with</span>
-          <hr className="flex-1 border-gray-300" />
+            {/* Terms */}
+            <p className="text-center text-xs text-gray-500 mt-8 leading-relaxed">
+              By creating an account, you agree to our{" "}
+              <Link
+                href="/terms"
+                className="text-blue-600 hover:text-blue-700 font-medium"
+              >
+                Terms of Service
+              </Link>{" "}
+              and{" "}
+              <Link
+                href="/privacy"
+                className="text-blue-600 hover:text-blue-700 font-medium"
+              >
+                Privacy Policy
+              </Link>
+            </p>
+          </div>
         </div>
-
-        {/* Social Buttons */}
-        <div className="flex justify-center gap-4">
-          <SocialButton
-            icon={<FcGoogle size={22} />}
-            provider="google"
-            className="w-12 h-12 rounded-xl border border-gray-300 hover:bg-gray-100 transition shadow-sm"
-          />
-          <SocialButton
-            icon={<FaFacebook size={22} className="text-blue-600" />}
-            provider="facebook"
-            className="w-12 h-12 rounded-xl border border-gray-300 hover:bg-gray-100 transition shadow-sm"
-          />
-        </div>
-
       </div>
-    </div>
-  </div>
-</section>
-
+    </section>
   );
 }

@@ -1,72 +1,169 @@
-import React from "react";
+"use client";
 
-export default function SpecialOffers() {
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+
+// Mock implementation of a message system for the clipboard function
+const useNotification = () => {
+  const [notification, setNotification] = useState({});
+
+  const showNotification = (id, message) => {
+    setNotification(prev => ({ ...prev, [id]: message }));
+    setTimeout(() => {
+      setNotification(prev => {
+        const newState = { ...prev };
+        delete newState[id];
+        return newState;
+      });
+    }, 1500);
+  };
+  return { notification, showNotification };
+};
+
+export default function App() {
+  const { notification, showNotification } = useNotification();
+
+  // Updated the 'bg' property to use DaisyUI semantic colors and ensure contrast
   const offers = [
     {
       id: 1,
-      title: "20% OFF on Electronics",
-      code: "ELEC20",
-      condition: "Valid on orders above $100",
+      title: "GIFT COUPON",
+      code: "SPECIALGIFT",
+      discount: "$70 OFF",
+      // Theme-adaptive Primary color for standout offer
+      bg: "bg-primary text-primary-content",
+      label: "SPECIAL DISCOUNT",
+      description:
+        "Get an instant $70 off on your next purchase over $250. Shop your favorite items and save more today!",
     },
     {
       id: 2,
-      title: "Free Shipping",
-      code: "FREESHIP",
-      condition: "All orders above $50",
+      title: "SPECIAL OFFER",
+      code: "HALFOFF",
+      discount: "50% OFF",
+      // Theme-adaptive Neutral (dark/high-contrast) color
+      bg: "bg-neutral text-neutral-content",
+      label: "DISCOUNT COUPON",
+      description:
+        "Enjoy 50% off on all fashion and lifestyle products. Limited-time deal — don’t miss out!",
     },
     {
       id: 3,
-      title: "Buy 1 Get 1 Free",
-      code: "BOGO",
-      condition: "Applicable on Fashion category",
+      title: "MEGA DEAL",
+      code: "SAVE30",
+      discount: "30% OFF",
+      // Theme-adaptive Accent color for differentiation
+      bg: "bg-accent text-accent-content",
+      label: "LIMITED OFFER",
+      description:
+        "Get 30% off electronics and accessories. Upgrade your tech and save with this exclusive offer.",
     },
   ];
 
+  // Function to copy the code to the clipboard
+  const handleCopy = (code, id) => {
+    // Fallback method for iFrame environment
+    const tempInput = document.createElement('textarea');
+    tempInput.value = code;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    document.execCommand('copy');
+    document.body.removeChild(tempInput);
+
+    showNotification(id, "Copied!");
+  };
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.15, delayChildren: 0.2 },
+    },
+  };
+
+  const cardVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { type: "spring", stiffness: 120, damping: 20 },
+    },
+  };
+
   return (
-    <section className="py-12">
+    <section className="py-16 bg-base-100">
       <div className="container mx-auto px-4">
         {/* Section Title */}
-        <div className="text-center mb-10">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-black">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-primary mb-2">
             Special Offers & Coupons
           </h2>
-          <p className="text-sm sm:text-base md:text-lg max-w-md mx-auto text-gray-400">
-            Grab the best deals and discounts available for a limited time!
+          <p className="text-base-content/80 mt-2 text-lg">
+            Unlock exclusive discounts and make your shopping experience smarter and more rewarding.
           </p>
         </div>
 
-        {/* Offers Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Coupons Grid */}
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
           {offers.map((offer) => (
-            <div
+            <motion.div
               key={offer.id}
-              className="bg-blue-100 p-4 sm:p-6 rounded-lg shadow hover:shadow-lg transition relative"
+              className={`relative flex items-stretch rounded-xl shadow-xl overflow-hidden transform hover:scale-[1.01] transition duration-300 ${offer.bg}`}
+              variants={cardVariants}
             >
-              {/* Ribbon / Badge */}
-              <span className="absolute top-2 left-6 bg-blue-600 text-white text-xs px-2 py-1 rounded">
-                Hot Deal
-              </span>
-
-              {/* Offer Info */}
-              <h3 className="text-base sm:text-lg font-semibold mb-2 mt-4 text-black">
-                {offer.title}
-              </h3>
-              <p className="text-gray-700 text-sm sm:text-base mb-4">
-                {offer.condition}
-              </p>
-
-              {/* Coupon & Button */}
-              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
-                <span className="font-bold text-secondary border border-secondary px-2 py-1 rounded cursor-pointer hover:transition text-center sm:text-left">
-                  {offer.code}
+              {/* Left Strip (Thematically colored background) */}
+              <div className="w-1/4 h-auto flex flex-col justify-center items-center py-6 relative">
+                {/* Border color uses 'current' color, which is set by the text color of the offer, ensuring contrast */}
+                <div className="absolute right-0 top-0 bottom-0 border-r border-dashed border-current opacity-60"></div>
+                <span className="text-sm font-bold uppercase tracking-widest rotate-180 [writing-mode:vertical-rl] opacity-90">
+                  {offer.label}
                 </span>
-                <button className="px-3 py-1 sm:px-4 sm:py-2 bg-secondary text-white rounded hover:cursor-pointer transition w-full sm:w-auto">
-                  Grab Offer
-                </button>
               </div>
-            </div>
+
+              {/* Right Content (Thematically colored base background) */}
+              <div className="flex-1 bg-base-100 text-base-content p-6 flex flex-col justify-between">
+                <div>
+                  <h3 className="text-xl font-bold mb-1 text-primary">{offer.title}</h3>
+                  <p className="text-5xl font-extrabold mb-4 leading-none text-secondary">
+                    {offer.discount}
+                  </p>
+                  <p className="text-sm mb-1 font-medium text-base-content/80">Promo Code:</p>
+                </div>
+                
+                <div className="flex items-center justify-between gap-3">
+                  {/* Coupon Code Box */}
+                  <div className="flex-1 flex items-center justify-center border border-base-content/40 bg-base-200 px-4 py-3 rounded-lg font-mono text-lg font-semibold cursor-pointer relative transition">
+                    {offer.code}
+                    {/* Copy Success Message */}
+                    {notification[offer.id] && (
+                      <span className="absolute -top-6 right-0 text-success text-xs font-bold animate-pulse">
+                        {notification[offer.id]}
+                      </span>
+                    )}
+                  </div>
+                  
+                  {/* Copy Button */}
+                  <button
+                    onClick={() => handleCopy(offer.code, offer.id)}
+                    className="btn btn-sm btn-primary btn-outline text-sm rounded-lg flex-shrink-0"
+                  >
+                    Copy
+                  </button>
+                </div>
+
+                <p className="text-xs mt-4 text-base-content/70 leading-relaxed">
+                  {offer.description}
+                </p>
+              </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

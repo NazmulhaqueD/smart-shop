@@ -17,6 +17,10 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [openSidebar, setOpenSidebar] = useState(false);
+  const [gemPoints, setGemPoints] = useState(null);
+  const [role, setRole] = useState(null);
+
 
   // Signup with email/password
   const signup = (email, password) => {
@@ -53,7 +57,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
@@ -61,6 +65,27 @@ export const AuthProvider = ({ children }) => {
     });
     return () => unsubscribe();
   }, []);
+
+  useEffect(() => {
+    const fetchRole = async () => {
+      if (!user?.email) {
+        setLoading(false);
+        return;
+      }
+      try {
+        const res = await fetch(
+          `https://smart-shop-server-three.vercel.app/users/${user.email}/role`
+        );
+        const data = await res.json();
+        if (data?.role) setRole(data.role);
+      } catch (err) {
+        console.error("Error fetching role:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchRole();
+  }, [user?.email]);
 
   return (
     <AuthContext.Provider
@@ -70,9 +95,15 @@ export const AuthProvider = ({ children }) => {
         signup,
         login,
         loginWithGoogle,
-        loginWithFacebook, 
+        loginWithFacebook,
         logout,
         updateUserProfile,
+        setOpenSidebar,
+        openSidebar,
+        setGemPoints,
+        gemPoints,
+        role,
+        setRole,
       }}
     >
       {children}

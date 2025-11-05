@@ -1,36 +1,65 @@
-"use client";
 import Image from "next/image";
+import { Star } from "lucide-react";
+import Quantity from './Quantity';
+import MoreProduct from './MoreProduct';
+import ProductForDetailsPage from "./ProductsForDetailsPage";
+import RatingAndReview from "@/app/components/ratingAndReview/RatingAndReview";
+import ImageWithMagnify from "./ImageWithMangnify";
 
-export default function ProductCard({ product }) {
+export default function ProductDetails({ product, related }) {
   return (
-    <div className="max-w-sm mx-auto my-8 bg-base-100 shadow-lg rounded-2xl overflow-hidden border border-gray-200">
-      {/* Image */}
-      <div className="relative w-full h-64">
-        <img
-        referrerPolicy="no"
-          src={product?.image}
-          alt={product?.name}
-          fill
-          className=" hover:scale-105 transition-transform h-56 w-full duration-300"
-        />
+    <div className="w-full bg-base-100 py-16">
+      <div className="container w-full mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-12 my-6 rounded-2xl items-center">
+
+        {/* Image Section */}
+        <div className="relative w-full h-[300px] lg:h-[500px] rounded-2xl overflow-hidden shadow-md group cursor-zoom-in">
+          <ImageWithMagnify
+            src={product.image?.startsWith("http") ? product.image : ""}
+            alt={product.name}
+          />
+        </div>
+
+        {/* Content Section */}
+        <div className="space-y-5">
+          <p className="text-gray-500 text-sm tracking-wider uppercase">
+            [{product?.category}]
+          </p>
+
+          <h1 className="text-3xl md:text-4xl font-semibold text-primary">
+            {product?.name}
+          </h1>
+
+          {/* Rating */}
+          <div className="flex items-center gap-2">
+            {Array(5)
+              .fill()
+              .map((_, i) => (
+                <Star key={i} size={18} className="fill-yellow-500 text-yellow-500" />
+              ))}
+            <span className="text-sm text-gray-500 ml-2">(546 Reviews)</span>
+          </div>
+
+          <p className="text-gray-600 leading-relaxed text-[15px]">
+            {product?.description}
+          </p>
+
+          <div>
+            <span className="text-2xl font-bold text-primary">
+              ${product?.price}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-6 mt-6">
+            <Quantity product={product} />
+          </div>
+        </div>
       </div>
 
-      {/* Content */}
-      <div className="p-4">
-        <h2 className="text-xl font-semibold text-primary">{product?.name}</h2>
-        <p className="text-gray-600 text-sm mt-2 line-clamp-3">
-          {product?.description}
-        </p>
-
-        {/* Price */}
-        <div className="mt-4 flex items-center justify-between">
-          <span className="text-lg font-bold text-secondary">
-            ৳ {product?.price}
-          </span>
-          <button className="px-4 py-2 bg-primary text-white font-medium rounded-lg hover:bg-secondary transition">
-            Buy Now
-          </button>
-        </div>
+      {/* Related Sections */}
+      <div className="container w-full mx-auto px-4 sm:px-6 lg:px-8 mt-10 space-y-12">
+        <RatingAndReview product={product} />
+        <MoreProduct related={related} />
+        <ProductForDetailsPage />
       </div>
     </div>
   );
