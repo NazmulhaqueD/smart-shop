@@ -441,11 +441,9 @@ Here's a high-level overview of the project's file structure:
 ---
 
 <div align="center">
-  <img src="https://i.postimg.cc/PrfV1Rmg/Screenshot-2025-11-06-002019.png" width="100%" alt="Landing Page" />
+  <img src="https://i.postimg.cc/PrfV1Rmg/Screenshot-2025-11-06-002019.png" width="100%" alt="Landing page Page" />
   <br/><br/>
-  <img src="https://i.postimg.cc/XNPBgZFj/Screenshot-2025-11-06-002309.png" width="100%" alt="Login Page" />
-  <br/><br/>
-  <img src="https://i.postimg.cc/MZN6mLHC/Screenshot-2025-10-26-132238.png" width="100%" alt="Register Page" />
+  <img src="https://i.postimg.cc/XNPBgZFj/Screenshot-2025-11-06-002309.png" width="100%" alt="Register Page" />
   <img src="" width="100%" alt="Banner" />
   <br/>
   <img src="" width="100%" alt="Page" />
