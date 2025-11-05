@@ -15,7 +15,7 @@ export default function MyDeliveries() {
     const fetchDeliveries = async () => {
       try {
         setLoading(true);
-        const res = await axios.get("http://localhost:5000/orders");
+        const res = await axios.get("https://smart-shop-server-three.vercel.app/orders");
         setDeliveries(res.data);
       } catch (error) {
         console.error("Error fetching deliveries:", error);
@@ -35,7 +35,7 @@ export default function MyDeliveries() {
 
     try {
       setUpdating(id);
-      const res = await axios.patch(`http://localhost:5000/orders/${id}`, {
+      const res = await axios.patch(`https://smart-shop-server-three.vercel.app/orders/${id}`, {
         status: newStatus,
       });
 

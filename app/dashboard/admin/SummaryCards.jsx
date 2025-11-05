@@ -12,7 +12,7 @@ export default function SummaryCards() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const base = "https://smart-shop-server-three.vercel.app";
+    const base = "https://smart-shop-server-three.vercel.app/";
 
     const fetchAll = async () => {
       setLoading(true);
@@ -21,9 +21,9 @@ export default function SummaryCards() {
       try {
         // 🔹 একসাথে ৩টা API call
         const [usersRes, ordersRes, productsRes] = await Promise.all([
-          fetch(`${base}/users`),
-          fetch(`${base}/orders`),
-          fetch(`${base}/products`),
+          fetch(`${base}users`),
+          fetch(`${base}orders`),
+          fetch(`${base}products`),
         ]);
 
         // 🔹 যদি কোনো API fail করে

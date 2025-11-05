@@ -21,7 +21,7 @@ export default function SupportSection() {
     e.preventDefault();
     setLoading(true);
     try {
-      await axios.post("http://localhost:5000/support", {
+      await axios.post("https://smart-shop-server-three.vercel.app/support", {
         ...formData,
         email: user?.email || formData.email,
       });

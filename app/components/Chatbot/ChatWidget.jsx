@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { MessageCircle, X } from "lucide-react";
 import { io } from "socket.io-client";
 
-const socket = io("http://localhost:5000");
+const socket = io("https://smart-shop-server-three.vercel.app/");
 
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
