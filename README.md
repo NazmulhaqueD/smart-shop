@@ -443,6 +443,21 @@ Here's a high-level overview of the project's file structure:
 <div align="center">
   <img src="https://i.postimg.cc/PrfV1Rmg/Screenshot-2025-11-06-002019.png" width="100%" alt="Landing page Page" />
   <br/><br/>
+  <img src="https://i.postimg.cc/FHj6Mk2L/Gemini-Generated-Image-vd2vb7vd2vb7vd2v.png" width="100%" alt="navbar" />
+  <img src="https://i.postimg.cc/LXFnnLn5/Screenshot-2025-10-31-230849.png" width="100%" alt="navbar" />
+  <br/><br/>
+  <img src="https://i.postimg.cc/9fZf50JM/Screenshot-2025-10-31-230950.png" width="100%" alt="banner" />
+  <img src="https://i.postimg.cc/wvFggmJ3/Screenshot-2025-10-31-231037.png" width="100%" alt="Banner" />
+  <br/>
+  <img src="https://i.postimg.cc/qRtHV5km/Screenshot-2025-10-31-231210.png" width="100%" alt="Page" />
+  <img src="https://i.postimg.cc/BnqWQ6Sq/Screenshot-2025-10-31-231136.png" width="100%" alt=" Page " />
+  <img src="https://i.postimg.cc/sXWHJdjW/Screenshot-2025-10-31-231231.png" width="100%" alt="Profile page" />
+  <img src="https://i.postimg.cc/4NPLP1gL/Screenshot-2025-10-31-231431.png" width="100%" alt="Page " />
+  <img src="https://i.postimg.cc/HLc6pDyM/Screenshot-2025-10-31-231256.png" width="100%" alt="Page" />
+  <img src="" width="100%" alt="Page " />
+  <img src="https://i.postimg.cc/W1tnnLSZ/Screenshot-2025-10-31-231752.png" width="100%" alt="Page" />
+  <img src="https://i.postimg.cc/W1tnnLSZ/Screenshot-2025-10-31-231752.png" width="100%" alt="Page " />
+  <img src="https://i.postimg.cc/76N04mmb/Screenshot-2025-10-31-231720.png" width="100%" alt="Page" />
   <img src="https://i.postimg.cc/XNPBgZFj/Screenshot-2025-11-06-002309.png" width="100%" alt="Register Page" />
   <br/><br/>
   <img src="https://i.postimg.cc/g0MtSqmH/Screenshot-2025-11-06-003011.png" width="100%" alt="Admin dashboard" />
