@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { GrCart } from "react-icons/gr";
-import { FaRegHeart } from "react-icons/fa";
 import axios from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -18,13 +17,13 @@ export default function AllProducts() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [sortOption, setSortOption] = useState(""); // New state for sorting
   const productsPerPage = 12;
 
   const { user } = useAuth();
   const { addToCart: addToLocalCart } = useCart();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const categoryQuery = searchParams.get("category");
 
   const indexOfLast = currentPage * productsPerPage;
   const indexOfFirst = indexOfLast - productsPerPage;
@@ -108,14 +107,37 @@ export default function AllProducts() {
   const handleCategory = (cat) => {
     setSelectedCategory(cat);
     setCurrentPage(1);
-    if (cat === "All") {
-      setFiltered(products);
-    } else {
-      const filteredItems = products.filter(
-        (p) => p.category.toLowerCase() === cat.toLowerCase()
-      );
-      setFiltered(filteredItems);
+    let filteredItems =
+      cat === "All"
+        ? [...products]
+        : products.filter(
+            (p) => p.category.toLowerCase() === cat.toLowerCase()
+          );
+
+    // Apply sorting if any
+    if (sortOption) {
+      filteredItems = sortProducts(filteredItems, sortOption);
     }
+
+    setFiltered(filteredItems);
+  };
+
+  // Sorting
+  const sortProducts = (items, option) => {
+    let sorted = [...items];
+    if (option === "price-asc") {
+      sorted.sort((a, b) => a.price - b.price);
+    } else if (option === "price-desc") {
+      sorted.sort((a, b) => b.price - a.price);
+    }
+    return sorted;
+  };
+
+  const handleSort = (option) => {
+    setSortOption(option);
+    const sortedFiltered = sortProducts(filtered, option);
+    setFiltered(sortedFiltered);
+    setCurrentPage(1);
   };
 
   if (loading) {
@@ -129,19 +151,30 @@ export default function AllProducts() {
   return (
     <div className="bg-base-100">
       <div className="container mx-auto p-4">
-        {/* Section Title */}
-        <div className="text-center mb-6">
+        {/* Section Title + Search + Sort */}
+        <div className="text-center mb-6 flex flex-col sm:flex-row justify-center items-center gap-4">
           <h2 className="text-3xl font-bold">
             {selectedCategory === "All"
               ? "All Products"
               : `Products of ${selectedCategory}`}
           </h2>
+
           <input
             type="text"
             placeholder="Search products..."
-            className="w-full sm:w-1/2 md:w-1/3 border border-gray-300 rounded px-4 py-2 mt-4 focus:outline-none focus:ring-1 focus:ring-blue-600"
+            className="w-full sm:w-1/2 md:w-1/3 border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-1 focus:ring-blue-600"
             onChange={handleSearch}
           />
+
+          <select
+            value={sortOption}
+            onChange={(e) => handleSort(e.target.value)}
+            className="w-full sm:w-auto border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-1 focus:ring-blue-600"
+          >
+            <option value="">Sort By</option>
+            <option value="price-asc">Price: Low to High</option>
+            <option value="price-desc">Price: High to Low</option>
+          </select>
         </div>
 
         {/* Category Buttons */}
