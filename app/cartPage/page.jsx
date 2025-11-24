@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import Swal from "sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
+import { AiFillHeart, AiOutlineDelete } from "react-icons/ai"; // icons
 
 export default function CartPage() {
   const { user } = useAuth();
@@ -119,6 +120,7 @@ export default function CartPage() {
                     <button
                       onClick={() => handleQuantityChange(item._id, "decrease")}
                       className="btn btn-sm btn-outline"
+                      aria-label="Decrease quantity"
                     >
                       -
                     </button>
@@ -126,6 +128,7 @@ export default function CartPage() {
                     <button
                       onClick={() => handleQuantityChange(item._id, "increase")}
                       className="btn btn-sm btn-outline"
+                      aria-label="Increase quantity"
                     >
                       +
                     </button>
@@ -135,11 +138,15 @@ export default function CartPage() {
                     <button
                       onClick={() => handleDeleteToCart(item._id)}
                       className="text-error cursor-pointer hover:text-error-focus text-xl"
+                      aria-label="Remove from cart"
                     >
-                      🗑️
+                      <AiOutlineDelete />
                     </button>
-                    <button className="text-neutral hover:text-primary text-xl">
-                      ❤️
+                    <button
+                      className="text-neutral hover:text-primary text-xl"
+                      aria-label="Add to wishlist"
+                    >
+                      <AiFillHeart />
                     </button>
                   </div>
                 </div>
