@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { GrCart } from "react-icons/gr";
 import axios from "axios";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -11,19 +11,19 @@ import Image from "next/image";
 import { useCart } from "@/context/CartContext";
 
 export default function AllProducts() {
-  const [products, setProducts] = useState([]);
-  const [filtered, setFiltered] = useState([]);
+  const [allProducts, setAllProducts] = useState([]); // Original products
+  const [filtered, setFiltered] = useState([]); // Filtered & sorted products
   const [categories, setCategories] = useState(["All"]);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [sortOption, setSortOption] = useState(""); // New state for sorting
+  const [sortOption, setSortOption] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const productsPerPage = 12;
 
   const { user } = useAuth();
   const { addToCart: addToLocalCart } = useCart();
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   const indexOfLast = currentPage * productsPerPage;
   const indexOfFirst = indexOfLast - productsPerPage;
@@ -35,11 +35,10 @@ export default function AllProducts() {
     axios
       .get("https://smart-shop-server-three.vercel.app/products")
       .then((res) => {
-        setProducts(res.data);
+        setAllProducts(res.data);
         setFiltered(res.data);
         setLoading(false);
 
-        // Extract categories dynamically
         const uniqueCategories = Array.from(
           new Set(res.data.map((p) => p.category))
         );
@@ -52,19 +51,51 @@ export default function AllProducts() {
       });
   }, []);
 
-  // Search
-  const handleSearch = async (e) => {
-    const name = e.target.value;
-    try {
-      const res = await axios.get(
-        `https://smart-shop-server-three.vercel.app/products?name=${name}`
+  // Centralized filter + sort + search
+  const updateFilteredProducts = (category, sort, search) => {
+    let temp = [...allProducts];
+
+    // Search
+    if (search) {
+      temp = temp.filter((p) =>
+        p.name.toLowerCase().includes(search.toLowerCase())
       );
-      setProducts(res.data);
-      setFiltered(res.data);
-      setCurrentPage(1);
-    } catch (err) {
-      toast.error("Search failed");
     }
+
+    // Category
+    if (category && category !== "All") {
+      temp = temp.filter(
+        (p) => p.category.toLowerCase() === category.toLowerCase()
+      );
+    }
+
+    // Sort
+    if (sort) {
+      if (sort === "price-asc") temp.sort((a, b) => a.price - b.price);
+      else if (sort === "price-desc") temp.sort((a, b) => b.price - a.price);
+    }
+
+    setFiltered(temp);
+    setCurrentPage(1);
+  };
+
+  // Search input handler
+  const handleSearch = (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    updateFilteredProducts(selectedCategory, sortOption, value);
+  };
+
+  // Category button handler
+  const handleCategory = (cat) => {
+    setSelectedCategory(cat);
+    updateFilteredProducts(cat, sortOption, searchTerm);
+  };
+
+  // Sort select handler
+  const handleSort = (option) => {
+    setSortOption(option);
+    updateFilteredProducts(selectedCategory, option, searchTerm);
   };
 
   // Add to cart
@@ -103,43 +134,6 @@ export default function AllProducts() {
     }
   };
 
-  // Category filter
-  const handleCategory = (cat) => {
-    setSelectedCategory(cat);
-    setCurrentPage(1);
-    let filteredItems =
-      cat === "All"
-        ? [...products]
-        : products.filter(
-            (p) => p.category.toLowerCase() === cat.toLowerCase()
-          );
-
-    // Apply sorting if any
-    if (sortOption) {
-      filteredItems = sortProducts(filteredItems, sortOption);
-    }
-
-    setFiltered(filteredItems);
-  };
-
-  // Sorting
-  const sortProducts = (items, option) => {
-    let sorted = [...items];
-    if (option === "price-asc") {
-      sorted.sort((a, b) => a.price - b.price);
-    } else if (option === "price-desc") {
-      sorted.sort((a, b) => b.price - a.price);
-    }
-    return sorted;
-  };
-
-  const handleSort = (option) => {
-    setSortOption(option);
-    const sortedFiltered = sortProducts(filtered, option);
-    setFiltered(sortedFiltered);
-    setCurrentPage(1);
-  };
-
   if (loading) {
     return (
       <div className="flex justify-center items-center h-40">
@@ -163,6 +157,7 @@ export default function AllProducts() {
             type="text"
             placeholder="Search products..."
             className="w-full sm:w-1/2 md:w-1/3 border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-1 focus:ring-blue-600"
+            value={searchTerm}
             onChange={handleSearch}
           />
 
