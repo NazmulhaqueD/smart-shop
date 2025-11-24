@@ -13,53 +13,45 @@ import { useCart } from "@/context/CartContext";
 
 export default function AllProducts() {
   const [products, setProducts] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
   const [filtered, setFiltered] = useState([]);
+  const [categories, setCategories] = useState(["All"]);
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const productsPerPage = 12;
-  const { user } = useAuth();
   const [loading, setLoading] = useState(true);
-  const { addToCart: addToLocalCart } = useCart();
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 12;
 
+  const { user } = useAuth();
+  const { addToCart: addToLocalCart } = useCart();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const category = searchParams.get("category");
+  const categoryQuery = searchParams.get("category");
 
-  // Pagination logic
   const indexOfLast = currentPage * productsPerPage;
   const indexOfFirst = indexOfLast - productsPerPage;
   const currentProducts = filtered.slice(indexOfFirst, indexOfLast);
 
-  // Load products
+  // Fetch products
   useEffect(() => {
     setLoading(true);
-    const url = category
-      ? `https://smart-shop-server-three.vercel.app/products?category=${category}`
-      : "https://smart-shop-server-three.vercel.app/products";
-
     axios
-      .get(url)
+      .get("https://smart-shop-server-three.vercel.app/products")
       .then((res) => {
         setProducts(res.data);
         setFiltered(res.data);
         setLoading(false);
+
+        // Extract categories dynamically
+        const uniqueCategories = Array.from(
+          new Set(res.data.map((p) => p.category))
+        );
+        setCategories(["All", ...uniqueCategories]);
       })
       .catch((err) => {
         console.log(err);
         setLoading(false);
         toast.error("Failed to load products");
       });
-  }, [category]);
-
-  const sectionTitle = category ? `Products of ${category}` : "All Products";
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-40">
-        <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
-  }
+  }, []);
 
   // Search
   const handleSearch = async (e) => {
@@ -102,7 +94,7 @@ export default function AllProducts() {
       );
       if (res.data?.insertedId) {
         toast.success("Added to cart");
-        addToLocalCart(product); // update local cart context
+        addToLocalCart(product);
       } else {
         toast.error("Failed to add to cart");
       }
@@ -112,31 +104,62 @@ export default function AllProducts() {
     }
   };
 
-  const handleCategory = (category) => {
-    setSelectedCategory(category);
+  // Category filter
+  const handleCategory = (cat) => {
+    setSelectedCategory(cat);
     setCurrentPage(1);
-    if (category === "All") {
+    if (cat === "All") {
       setFiltered(products);
     } else {
       const filteredItems = products.filter(
-        (p) => p.category.toLowerCase() === category.toLowerCase()
+        (p) => p.category.toLowerCase() === cat.toLowerCase()
       );
       setFiltered(filteredItems);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-40">
+        <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-base-100">
       <div className="container mx-auto p-4">
         {/* Section Title */}
         <div className="text-center mb-6">
-          <h2 className="text-3xl font-bold">{sectionTitle}</h2>
+          <h2 className="text-3xl font-bold">
+            {selectedCategory === "All"
+              ? "All Products"
+              : `Products of ${selectedCategory}`}
+          </h2>
           <input
-            onChange={handleSearch}
             type="text"
             placeholder="Search products..."
             className="w-full sm:w-1/2 md:w-1/3 border border-gray-300 rounded px-4 py-2 mt-4 focus:outline-none focus:ring-1 focus:ring-blue-600"
+            onChange={handleSearch}
           />
+        </div>
+
+        {/* Category Buttons */}
+        <div className="flex flex-wrap justify-center gap-2 mb-6">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => handleCategory(cat)}
+              className={`px-4 py-2 rounded-full transition cursor-pointer font-medium text-sm
+              ${
+                selectedCategory === cat
+                  ? "bg-blue-600 text-white"
+                  : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-100"
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
         </div>
 
         {/* Products Grid */}
@@ -144,14 +167,13 @@ export default function AllProducts() {
           {currentProducts.map((product) => (
             <div
               key={product._id}
-              className="border border-gray-300 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition"
+              className="border border-gray-300 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition flex flex-col"
             >
-              {/* Image */}
               <Link href={`/products/${product._id}`}>
                 <div className="w-full h-48 flex items-center justify-center bg-gray-50">
                   <Image
                     src={product.image || "/placeholder.jpg"}
-                    alt={product.name || "Product image"}
+                    alt={product.name}
                     width={300}
                     height={300}
                     className="w-full h-48 object-cover"
@@ -159,37 +181,24 @@ export default function AllProducts() {
                 </div>
               </Link>
 
-              {/* Product Info */}
-              <div className="p-4">
-                {/* Name */}
+              <div className="p-4 flex flex-col flex-grow">
                 <Link href={`/products/${product._id}`}>
-                  <h3
-                    className="inline-block relative text-gray-500 font-medium text-sm mb-1 
-                   hover:text-blue-600 transition-colors duration-200 
-                   after:content-[''] after:absolute after:left-0 after:bottom-0 
-                   after:w-0 after:h-[1px] after:bg-blue-600 
-                   hover:after:w-full after:transition-all after:duration-300"
-                  >
+                  <h3 className="inline-block relative text-gray-500 font-medium text-sm mb-1 hover:text-blue-600 transition-colors duration-200">
                     {product.name}
                   </h3>
                 </Link>
 
                 <div className="text-blue-600 font-bold text-sm mb-2">
-                  {product.price}{" "}
+                  ${product.price}{" "}
                   <span className="text-gray-500 line-through text-xs">
                     {product.origPrice}
                   </span>
                 </div>
 
-                <div className="flex justify-between items-center">
-                  <div className="flex space-x-2 items-center">
-                    <button onClick={() => handleAddToCart(product)}>
-                      <GrCart className="w-6 h-6 text-blue-600 hover:cursor-pointer" />
-                    </button>
-                    <button>
-                      <FaRegHeart className="w-6 h-6 text-secondary hover:cursor-pointer" />
-                    </button>
-                  </div>
+                <div className="flex justify-between mt-auto">
+                  <button onClick={() => handleAddToCart(product)}>
+                    <GrCart className="w-6 h-6 text-blue-600 hover:cursor-pointer" />
+                  </button>
                   <Link
                     href={`/checkout?type=single&id=${product._id}`}
                     className="text-md py-1 px-3 bg-secondary text-white rounded"
@@ -203,7 +212,7 @@ export default function AllProducts() {
         </div>
 
         {/* Pagination */}
-        <div className="flex justify-center mt-6 space-x-2">
+        <div className="flex justify-center mt-6 space-x-2 flex-wrap gap-2">
           <button
             onClick={() => setCurrentPage(currentPage - 1)}
             disabled={currentPage === 1}
@@ -211,7 +220,6 @@ export default function AllProducts() {
           >
             Prev
           </button>
-
           {[...Array(Math.ceil(filtered.length / productsPerPage))].map(
             (_, i) => (
               <button
@@ -227,7 +235,6 @@ export default function AllProducts() {
               </button>
             )
           )}
-
           <button
             onClick={() => setCurrentPage(currentPage + 1)}
             disabled={
