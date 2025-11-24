@@ -5,27 +5,34 @@ import Footer from '../components/shared/footer/Footer'
 import axios from 'axios'
 import { useAuth } from '@/context/AuthContext'
 import { useRouter } from 'next/navigation'
+import { useCart } from '@/context/CartContext'
 
 export default function CartPage() {
   const { user } = useAuth();
-  const [cartItems, setCartItems] = useState([]);
-  const router = useRouter();
+  const [cartItems, setCartItems] = useState([]); // ঠিক করা হলো
+  const router = useRouter(); 
+  const { cartItems: contextCartItems, removeFromCart } = useCart();
 
   useEffect(() => {
-    axios.get(`https://smart-shop-server-three.vercel.app/cartItems?email=${user?.email}`)
-      .then(res => setCartItems(res.data))
-      .catch(err => console.log(err));
+    if(user?.email){
+      axios.get(`https://smart-shop-server-three.vercel.app/cartItems?email=${user?.email}`)
+        .then(res => setCartItems(res.data))
+        .catch(err => console.log(err));
+    }
   }, [user?.email]);
 
   const handleDeleteToCart = async (id) => {
-    axios.delete(`https://smart-shop-server-three.vercel.app/cartItems/${id}`)
-      .then(res => {
-        if (res.data?.deletedCount) {
-          const remaining = cartItems.filter(item => item._id !== id);
-          setCartItems(remaining);
-        }
-      })
-      .catch(err => console.log(err));
+    try {
+      const res = await axios.delete(`https://smart-shop-server-three.vercel.app/cartItems/${id}`);
+      if (res.data?.deletedCount) {
+        const remaining = cartItems.filter(item => item._id !== id);
+        setCartItems(remaining); // UI update হবে
+        alert("Item removed from cart!"); // এখন alert দেখাবে
+      }
+    } catch (err) {
+      console.log(err);
+      alert("Failed to remove item!");
+    }
   }
 
   return (
@@ -33,7 +40,9 @@ export default function CartPage() {
       <Navbar />
 
       <div className='py-10 max-w-7xl mx-auto px-4 min-h-[70vh]'>
-        <h2 className='text-3xl font-semibold text-center mt-10 mb-5 text-primary'>Shopping Cart {cartItems?.length}</h2>
+        <h2 className='text-3xl font-semibold text-center mt-10 mb-5 text-primary'>
+          Shopping Cart ({cartItems?.length})
+        </h2>
 
         <div className='max-w-7xl mx-auto flex flex-col lg:flex-row gap-10 px-4'>
           {/* Cart Items */}
@@ -60,7 +69,7 @@ export default function CartPage() {
                   </div>
 
                   <div className='flex flex-col items-center gap-2'>
-                    <button onClick={() => handleDeleteToCart(item?._id)} className='text-error cursor-pointer hover:text-error-focus text-xl'>🗑️</button>
+                    <button onClick={() => handleDeleteToCart(item._id)} className='text-error cursor-pointer hover:text-error-focus text-xl'>🗑️</button>
                     <button className='text-neutral hover:text-primary text-xl'>❤️</button>
                   </div>
                 </div>
