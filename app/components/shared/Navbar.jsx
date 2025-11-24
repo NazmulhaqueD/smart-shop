@@ -40,13 +40,6 @@ export default function Navbar() {
   }
   const linkClass = (path) =>
     pathname === path ? "text-primary font-semibold underline" : "text-gray-600 hover:text-primary hover:underline";
-//brach check
-  // const handleSearchSubmit = (e) => {
-  //   e.preventDefault();
-  //   if (searchQuery.trim()) {
-  //     router.push(`https://smart-shop-server-three.vercel.app/products?search=${encodeURIComponent(searchQuery.trim())}`);
-  //   }
-  // };
 
   return (
     <nav className="bg-base-100 shadow-md sticky top-0 z-50">
@@ -78,15 +71,7 @@ export default function Navbar() {
           {/* Right side */}
           <div className="hidden md:flex items-center space-x-4 text-gray-300">
             <ThemeToggler />
-            {/* <form onSubmit={handleSearchSubmit}>
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search..."
-                className="pl-3 pr-3 py-1 border rounded-lg w-44 text-gray-600 focus:outline-none focus:ring-2 focus:ring-primary"
-              />
-            </form> */}
+            
             <Gems />
             <Link href="/cartPage" className="relative">
               <ShoppingCart className="w-6 h-6 text-gray-700 hover:text-primary" />
@@ -143,17 +128,7 @@ export default function Navbar() {
           <div className="pt-3">
             <ThemeToggler />
           </div>
-
-          {/* Search */}
-          <form onSubmit={handleSearchSubmit}>
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search..."
-              className="w-full px-3 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary mt-3"
-            />
-          </form>
+          
 
           {/* Icons */}
           <div className="flex items-center space-x-6 pt-4">
