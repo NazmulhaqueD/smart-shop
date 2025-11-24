@@ -17,7 +17,7 @@ export default function AdminSupportDashboard() {
   const fetchSupportTickets = async () => {
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/support");
+      const res = await fetch("https://smart-shop-server-three.vercel.app/support");
       const data = await res.json();
       setSupportTickets(data);
     } catch (err) {
@@ -29,7 +29,7 @@ export default function AdminSupportDashboard() {
 
   const updateStatus = async (id, newStatus) => {
     try {
-      await fetch(`http://localhost:5000/support/${id}`, {
+      await fetch(`https://smart-shop-server-three.vercel.app/support/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: newStatus }),

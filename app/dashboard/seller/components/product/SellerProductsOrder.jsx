@@ -30,7 +30,7 @@ export default function SellerProductsOrder({ order }) {
       return;
     }
 
-    const resUpdate = await axios.patch(`http://localhost:5000/tracking/update/${order._id}`, { stepTitle });
+    const resUpdate = await axios.patch(`https://smart-shop-server-three.vercel.app/tracking/update/${order._id}`, { stepTitle });
     if (resUpdate.data.modifiedCount) {
       Swal.fire({
         position: "center",

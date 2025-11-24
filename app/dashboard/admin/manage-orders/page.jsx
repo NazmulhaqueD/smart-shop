@@ -8,8 +8,9 @@ export default async function ManageOrders() {
   try {
     const res = await axios.get("https://smart-shop-server-three.vercel.app/orders");
     orders = res.data;
-  } catch (error) {
-    alert(error);
+  } 
+  catch (error) {
+    console.log(error);
   }
 
   return (

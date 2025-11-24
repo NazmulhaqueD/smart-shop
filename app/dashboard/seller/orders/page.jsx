@@ -19,7 +19,7 @@ export default function OrdersPage() {
     const fetchOrders = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:5000/orders/seller/${user.email}`
+          `https://smart-shop-server-three.vercel.app/orders/seller/${user.email}`
         );
         setOrders(res.data);
       } catch (error) {

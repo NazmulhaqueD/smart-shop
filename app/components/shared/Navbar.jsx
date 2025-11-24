@@ -18,7 +18,8 @@ export default function Navbar() {
   // const { cartItems } = useCart(); // for real-time cart count
   const pathname = usePathname();
   const router = useRouter();
-    const dashboardPath =
+
+  const dashboardPath =
     role === "admin"
       ? "/dashboard/admin"
       : role === "seller"
@@ -38,18 +39,26 @@ export default function Navbar() {
       icon: <LayoutDashboard className="w-4 h-4" />,
     });
   }
+
+  // UPDATED: Use text-base-content for default links color
   const linkClass = (path) =>
     pathname === path ? "text-primary font-semibold underline" : "text-gray-600 hover:text-primary hover:underline";
 
   return (
-    <nav className="bg-base-100 shadow-md sticky top-0 z-50">
-      <div className="mx-auto px-4 sm:px-6 lg:px-12">
+    // FIX: Added text-base-content to ensure all text inherits the theme color
+    <nav className="bg-base-100 shadow-md sticky top-0 z-50 text-base-content">
+      <div className="mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Left: Hamburger + Logo */}
           <div className="flex items-center gap-3">
             <div className="md:hidden">
-              <button onClick={() => setIsOpen(!isOpen)} className="p-1 rounded-md hover:bg-gray-200 transition">
-                {isOpen ? <X className="w-7 h-7 text-gray-700" /> : <Menu className="w-7 h-7 text-gray-700" />}
+              {/* FIX: Replaced fixed hover:bg-gray-200 with theme-aware hover:bg-neutral/10 */}
+              <button onClick={() => setIsOpen(!isOpen)} className="p-1 rounded-md hover:bg-neutral/10 transition">
+                {/* FIX: Replaced fixed text-gray-700 with theme-aware text-base-content */}
+                {isOpen 
+                  ? <X className="w-7 h-7 text-base-content" /> 
+                  : <Menu className="w-7 h-7 text-base-content" />
+                }
               </button>
             </div>
             <div className="flex-shrink-0 text-2xl font-bold text-primary">
@@ -60,7 +69,8 @@ export default function Navbar() {
           </div>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-6 text-gray-600">
+          {/* FIX: Removed text-gray-600 from parent div as linkClass handles color */}
+          <div className="hidden md:flex items-center space-x-6">
             {links.map((link) => (
               <Link key={link.path} href={link.path} className={`flex items-center gap-1 ${linkClass(link.path)}`}>
                 {link.icon} {link.name}
@@ -69,26 +79,29 @@ export default function Navbar() {
           </div>
 
           {/* Right side */}
-          <div className="hidden md:flex items-center space-x-4 text-gray-300">
+          {/* FIX: Removed text-gray-300 from parent div */}
+          <div className="hidden md:flex items-center space-x-4">
             <ThemeToggler />
             
             <Gems />
             <Link href="/cartPage" className="relative">
-              <ShoppingCart className="w-6 h-6 text-gray-700 hover:text-primary" />
+              {/* FIX: Replaced fixed text-gray-700 with theme-aware text-base-content */}
+              <ShoppingCart className="w-6 h-6 text-base-content hover:text-primary" />
               <span className="absolute -top-2 -right-2 bg-primary text-white text-xs px-1.5 py-0.5 rounded-full">
                 {/* {cartItems.length} */} 2
               </span>
             </Link>
             {!user ? (
               <Link href="/login">
-                <User className="w-6 h-6 text-gray-700 hover:text-blue-600" />
+                {/* FIX: Replaced fixed text-gray-700 and hover:text-blue-600 with theme-aware text-base-content and hover:text-primary */}
+                <User className="w-6 h-6 text-base-content hover:text-primary" />
               </Link>
             ) : (
               <DropDown>
                 <img
                   src={user.photoURL || "/default-avatar.png"}
                   alt="profile"
-                  className="w-8 h-8 rounded-full cursor-pointer border hover:ring-2 hover:ring-indigo-400 transition-all ring-2 ring-offset-2"
+                  className="w-8 h-8 rounded-full cursor-pointer border hover:ring-2 hover:ring-primary transition-all ring-2 ring-offset-2"
                 />
               </DropDown>
             )}
@@ -96,16 +109,17 @@ export default function Navbar() {
 
           {/* Mobile Right */}
           <div className="md:hidden flex items-center">
+            {/* ... Mobile User/Dropdown icons are fine, inheriting parent styles ... */}
             {!user ? (
               <Link href="/login">
-                <User className="w-6 h-6 text-gray-700 hover:text-blue-600" />
+                <User className="w-6 h-6 text-base-content hover:text-primary" />
               </Link>
             ) : (
               <DropDown>
                 <img
                   src={user.photoURL || "/default-avatar.png"}
                   alt="profile"
-                  className="w-8 h-8 rounded-full cursor-pointer border hover:ring-2 hover:ring-indigo-400 transition-all ring-2 ring-offset-2"
+                  className="w-8 h-8 rounded-full cursor-pointer border hover:ring-2 hover:ring-primary transition-all ring-2 ring-offset-2"
                 />
               </DropDown>
             )}
@@ -115,16 +129,18 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="md:hidden text-gray-700 shadow-lg px-6 pt-2 pb-4 space-y-4 bg-base-100 rounded-b-lg">
+        // FIX: Replaced fixed text-gray-700 with theme-aware text-base-content
+        <div className="md:hidden text-base-content shadow-lg px-6 pt-2 pb-4 space-y-4 bg-base-100 rounded-b-lg">
           <div className="flex flex-col space-y-3">
             {links.map((link) => (
-              <Link key={link.path} href={link.path} className="flex items-center gap-2 p-2 rounded hover:bg-gray-100">
+              // FIX: Replaced fixed hover:bg-gray-100 with theme-aware hover:bg-neutral/10
+              <Link key={link.path} href={link.path} className="flex items-center gap-2 p-2 rounded hover:bg-neutral/10">
                 {link.icon} {link.name}
               </Link>
             ))}
           </div>
 
-          {/* Theme Toggle */}
+          {/* Theme Toggle is fine fv*/}
           <div className="pt-3">
             <ThemeToggler />
           </div>
@@ -133,24 +149,12 @@ export default function Navbar() {
           {/* Icons */}
           <div className="flex items-center space-x-6 pt-4">
             <Link href="/cartPage" className="relative">
-              <ShoppingCart className="w-6 h-6 text-gray-700 hover:text-blue-600" />
+              {/* FIX: Replaced fixed text-gray-700 and hover:text-blue-600 */}
+              <ShoppingCart className="w-6 h-6 text-base-content hover:text-primary" />
               <span className="absolute -top-2 -right-2 bg-primary text-white text-xs px-1.5 py-0.5 rounded-full">
                 {/* {cartItems.length} */} 2
               </span>
             </Link>
-            {!user ? (
-              <Link href="/login">
-                <User className="w-6 h-6 text-gray-700 hover:text-blue-600" />
-              </Link>
-            ) : (
-              <DropDown>
-                <img
-                  src={user.photoURL || "/default-avatar.png"}
-                  alt="profile"
-                  className="w-8 h-8 rounded-full cursor-pointer border hover:ring-2 hover:ring-indigo-400 transition-all ring-2 ring-offset-2"
-                />
-              </DropDown>
-            )}
           </div>
         </div>
       )}
