@@ -18,7 +18,7 @@ export default function DeliverySupport() {
     const fetchTickets = async () => {
       try {
         setLoading(true);
-        const res = await axios.get("http://localhost:5000/issue");
+        const res = await axios.get("https://smart-shop-server-three.vercel.app/issue");
         const formattedTickets = res.data.map((t) => ({
           ...t,
           _id: t._id.toString(), // ensure unique key
@@ -37,7 +37,7 @@ export default function DeliverySupport() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:5000/issue", newTicket);
+      const res = await axios.post("https://smart-shop-server-three.vercel.app/issue", newTicket);
       const ticketWithId = { ...newTicket, _id: res.data.insertedId.toString(), status: "Pending" };
       setTickets([ticketWithId, ...tickets]);
       setNewTicket({ name: "", email: "", message: "" });
@@ -50,7 +50,7 @@ export default function DeliverySupport() {
   // ✅ Update issue status
   const handleStatusUpdate = async (id, status) => {
     try {
-      await axios.patch(`http://localhost:5000/issue/${id}`, { status });
+      await axios.patch(`https://smart-shop-server-three.vercel.app/issue/${id}`, { status });
       setTickets((prev) =>
         prev.map((t) => (t._id === id ? { ...t, status } : t))
       );

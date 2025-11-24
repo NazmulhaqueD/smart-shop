@@ -54,7 +54,7 @@ const Profile = () => {
 
     const onSubmit = async (data) => {
         try {
-            const res = await axiosSecure.put(`http://localhost:5000/users/${user?.email}`, data);
+            const res = await axiosSecure.put(`https://smart-shop-server-three.vercel.app/users/${user?.email}`, data);
             console.log("Response:", res.data);
             if (res.data?.modifiedCount > 0) {
                 Swal.fire({

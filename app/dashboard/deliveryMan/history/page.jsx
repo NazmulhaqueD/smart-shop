@@ -14,7 +14,7 @@ export default function DeliveryHistory() {
     const fetchHistory = async () => {
       try {
         setLoading(true);
-        const res = await axios.get("http://localhost:5000/orders");
+        const res = await axios.get("https://smart-shop-server-three.vercel.app/orders");
         const completed = res.data.filter((order) => order.status === "completed");
         setHistory(completed);
       } catch (error) {

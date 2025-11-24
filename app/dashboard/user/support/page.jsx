@@ -18,7 +18,7 @@ export default function SupportTracker() {
   const fetchTickets = async () => {
     try {
       const res = await fetch(
-        `http://localhost:5000/support?userEmail=${user.email}`
+        `https://smart-shop-server-three.vercel.app/support?userEmail=${user.email}`
       );
       const data = await res.json();
       setTickets(data);
