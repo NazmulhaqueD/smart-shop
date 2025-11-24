@@ -3,6 +3,7 @@ import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import ChatWidget from "./components/Chatbot/ChatWidget";
 import Ai from "./components/ai/page";
+import { CartProvider } from "@/context/CartContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,14 +25,15 @@ export default function RootLayout({ children }) {
     <html lang="en" data-theme="light">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-
         // ADD THIS PROP
         suppressHydrationWarning={true}
       >
         <AuthProvider>
-          {children}
-          <Ai />
-          {/* <ChatWidget></ChatWidget> */}
+          <CartProvider>
+            {children}
+            <Ai />
+            {/* <ChatWidget></ChatWidget> */}
+          </CartProvider>
         </AuthProvider>
       </body>
     </html>
