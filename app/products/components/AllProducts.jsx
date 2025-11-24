@@ -6,8 +6,10 @@ import axios from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { useAuth } from "@/context/AuthContext";
 import Image from "next/image";
+import { useCart } from "@/context/CartContext";
 
 export default function AllProducts() {
   const [products, setProducts] = useState([]);
@@ -17,7 +19,7 @@ export default function AllProducts() {
   const productsPerPage = 12;
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
-
+  const { addToCart: addToLocalCart } = useCart();
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -39,12 +41,13 @@ export default function AllProducts() {
       .get(url)
       .then((res) => {
         setProducts(res.data);
-        setFiltered(res.data); 
+        setFiltered(res.data);
         setLoading(false);
       })
       .catch((err) => {
         console.log(err);
         setLoading(false);
+        toast.error("Failed to load products");
       });
   }, [category]);
 
@@ -66,16 +69,23 @@ export default function AllProducts() {
         `https://smart-shop-server-three.vercel.app/products?name=${name}`
       );
       setProducts(res.data);
+      setFiltered(res.data);
       setCurrentPage(1);
     } catch (err) {
-      alert(err);
+      toast.error("Search failed");
     }
   };
 
   // Add to cart
   const handleAddToCart = async (product) => {
+    if (!user) {
+      toast.error("Please login to add to cart");
+      router.push("/login");
+      return;
+    }
+
     const cartItem = {
-      userEmail: user?.email,
+      userEmail: user.email,
       productId: product._id,
       name: product.name,
       price: product.price,
@@ -85,33 +95,39 @@ export default function AllProducts() {
       sellerName: product.sellerName,
     };
 
-    axios
-      .post("https://smart-shop-server-three.vercel.app/addToCart", cartItem)
-      .then((res) => {
-        if (res.data?.insertedId) {
-          toast.success("Added to cart");
-        }
-      })
-      .catch((err) => console.log(err));
-    console.log(cartItem);
+    try {
+      const res = await axios.post(
+        "https://smart-shop-server-three.vercel.app/addToCart",
+        cartItem
+      );
+      if (res.data?.insertedId) {
+        toast.success("Added to cart");
+        addToLocalCart(product); // update local cart context
+      } else {
+        toast.error("Failed to add to cart");
+      }
+    } catch (err) {
+      console.log(err);
+      toast.error("Something went wrong");
+    }
   };
 
-  const handleCategory = (category) => {       // <-- new
-    setSelectedCategory(category);             // highlight selected
-    setCurrentPage(1);                         // reset pagination
+  const handleCategory = (category) => {
+    setSelectedCategory(category);
+    setCurrentPage(1);
     if (category === "All") {
-      setFiltered(products);                   // show all
+      setFiltered(products);
     } else {
       const filteredItems = products.filter(
         (p) => p.category.toLowerCase() === category.toLowerCase()
       );
-      setFiltered(filteredItems);             // filtered products
+      setFiltered(filteredItems);
     }
   };
 
   return (
     <div className="bg-base-100">
-      <div className="container mx-auto p-4 ">
+      <div className="container mx-auto p-4">
         {/* Section Title */}
         <div className="text-center mb-6">
           <h2 className="text-3xl font-bold">{sectionTitle}</h2>
@@ -124,14 +140,13 @@ export default function AllProducts() {
         </div>
 
         {/* Products Grid */}
-
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {currentProducts.map((product) => (
             <div
               key={product._id}
               className="border border-gray-300 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition"
             >
-              {/* Image  */}
+              {/* Image */}
               <Link href={`/products/${product._id}`}>
                 <div className="w-full h-48 flex items-center justify-center bg-gray-50">
                   <Image
@@ -150,10 +165,10 @@ export default function AllProducts() {
                 <Link href={`/products/${product._id}`}>
                   <h3
                     className="inline-block relative text-gray-500 font-medium text-sm mb-1 
-               hover:text-blue-600 transition-colors duration-200 
-               after:content-[''] after:absolute after:left-0 after:bottom-0 
-               after:w-0 after:h-[1px] after:bg-blue-600 
-               hover:after:w-full after:transition-all after:duration-300"
+                   hover:text-blue-600 transition-colors duration-200 
+                   after:content-[''] after:absolute after:left-0 after:bottom-0 
+                   after:w-0 after:h-[1px] after:bg-blue-600 
+                   hover:after:w-full after:transition-all after:duration-300"
                   >
                     {product.name}
                   </h3>
@@ -169,7 +184,7 @@ export default function AllProducts() {
                 <div className="flex justify-between items-center">
                   <div className="flex space-x-2 items-center">
                     <button onClick={() => handleAddToCart(product)}>
-                      <GrCart className="w-6 h-6 text-blue-600 hover:cursor-pointer " />
+                      <GrCart className="w-6 h-6 text-blue-600 hover:cursor-pointer" />
                     </button>
                     <button>
                       <FaRegHeart className="w-6 h-6 text-secondary hover:cursor-pointer" />
@@ -197,7 +212,7 @@ export default function AllProducts() {
             Prev
           </button>
 
-          {[...Array(Math.ceil(products.length / productsPerPage))].map(
+          {[...Array(Math.ceil(filtered.length / productsPerPage))].map(
             (_, i) => (
               <button
                 key={i}
@@ -216,13 +231,14 @@ export default function AllProducts() {
           <button
             onClick={() => setCurrentPage(currentPage + 1)}
             disabled={
-              currentPage === Math.ceil(products.length / productsPerPage)
+              currentPage === Math.ceil(filtered.length / productsPerPage)
             }
             className="px-3 py-1 rounded disabled:opacity-50 bg-secondary text-white"
           >
             Next
           </button>
         </div>
+
         <ToastContainer />
       </div>
     </div>
