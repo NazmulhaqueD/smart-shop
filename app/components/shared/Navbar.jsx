@@ -42,10 +42,8 @@ export default function Navbar() {
 
   // UPDATED: Use text-base-content for default links color
   const linkClass = (path) =>
-    pathname === path 
-      ? "text-primary font-semibold underline" 
-      : "text-base-content/80 hover:text-primary hover:underline";
-
+    pathname === path ? "text-primary font-semibold underline" : "text-gray-600 hover:text-primary hover:underline";
+//brach check
   // const handleSearchSubmit = (e) => {
   //   e.preventDefault();
   //   if (searchQuery.trim()) {
