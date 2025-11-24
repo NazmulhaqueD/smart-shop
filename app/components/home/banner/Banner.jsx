@@ -65,7 +65,7 @@ export default function Banner() {
               Start Shopping
             </motion.a>
             <motion.a
-              href="/track-order"
+              href="/products"
               className="px-6 py-3 border border-white rounded-lg hover:bg-white hover:text-black transition shadow-lg"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
