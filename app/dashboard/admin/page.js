@@ -10,6 +10,7 @@ export default function AdminDashboard() {
     <div className="max-w-7xl mx-auto px-6 py-10">
       {/* PAGE TITLE */}
       <h1 className="text-3xl font-bold mb-8 text-gray-800">Admin Dashboard</h1>
+      
 
       <SummaryCards />
       <SalesOverview />
