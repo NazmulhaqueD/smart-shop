@@ -9,6 +9,7 @@ export default function DashboardPage() {
 
       {/* ✅ Client-side data handling */}
       <DashboardClient />
+    
     </div>
   );
 }
